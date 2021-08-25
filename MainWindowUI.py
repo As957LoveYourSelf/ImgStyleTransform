@@ -6,6 +6,16 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+"""
+Clicked：鼠标左键点击按钮并释放触发该信号。最常用。
+
+Pressed：鼠标左键按下时触发该信号
+
+Released：鼠标左键释放时触发该信号
+
+Toggled：控件标记状态发生改变时触发该信号。
+"""
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -18,17 +28,23 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
 
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(210, 600, 120, 30))
-        self.pushButton.setObjectName("OpenImage")
+        self.OpenImageButton = QtWidgets.QPushButton(self.centralwidget)
+        self.OpenImageButton.setGeometry(QtCore.QRect(210, 600, 120, 30))
+        self.OpenImageButton.setObjectName("OpenImage")
 
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(750, 600, 120, 30))
-        self.pushButton_2.setObjectName("SaveImage")
+        self.imagePath_label = QtWidgets.QLabel(self.centralwidget)
+        self.imagePath_label.setGeometry(QtCore.QRect(195, 650, 150, 50))
+        self.imagePath_label.setText("图片路径")
+        self.imagePath_label.setWordWrap(True)
+        self.imagePath_label.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_3.setGeometry(QtCore.QRect(455, 700, 150, 40))
-        self.pushButton_3.setObjectName("BeginConv")
+        self.SaveImageButton = QtWidgets.QPushButton(self.centralwidget)
+        self.SaveImageButton.setGeometry(QtCore.QRect(750, 590, 120, 30))
+        self.SaveImageButton.setObjectName("SaveImage")
+
+        self.BeginConvButton = QtWidgets.QPushButton(self.centralwidget)
+        self.BeginConvButton.setGeometry(QtCore.QRect(455, 700, 150, 40))
+        self.BeginConvButton.setObjectName("BeginConv")
 
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(20, 230, 500, 330))
@@ -79,14 +95,16 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
+
+
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "图风转"))
-        self.pushButton.setText(_translate("MainWindow", "OpenImage"))
-        self.pushButton_2.setText(_translate("MainWindow", "Save"))
-        self.pushButton_3.setText(_translate("MainWindow", "BeginConv"))
+        self.OpenImageButton.setText(_translate("MainWindow", "OpenImage"))
+        self.SaveImageButton.setText(_translate("MainWindow", "Save"))
+        self.BeginConvButton.setText(_translate("MainWindow", "BeginConv"))
         self.label.setText(_translate("MainWindow", "原始图片"))
         self.label_2.setText(_translate("MainWindow", "结果图片"))
         self.radioButton.setText(_translate("MainWindow", "新海诚画风"))
@@ -94,4 +112,4 @@ class Ui_MainWindow(object):
         self.radioButton_3.setText(_translate("MainWindow", "铅笔画"))
         self.radioButton_4.setText(_translate("MainWindow", "梵高星空风"))
 
-    # def addListener(self):
+
