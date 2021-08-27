@@ -8,23 +8,36 @@ Content:
     radioButton2("国风")
     radioButton3("铅笔画")
     radioButton4("梵高星空风")
+Tips:
+单个文件打开 QFileDialog.getOpenFileName()
+多个文件打开 QFileDialog.getOpenFileNames()
+文件夹选取 QFileDialog.getExistingDirectory()
+文件保存 QFileDialog.getSaveFileName()
 """
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
-from PyQt5 import QtGui
+from PyQt5.Qt import QThread, QMutex
 from MainWindowUI import Ui_MainWindow
+from options import model_options
 import sys
-import cv2
-import model_options as el
+
+
 class MyMainForm(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super(MyMainForm, self).__init__(parent)
         self.setupUi(self)
-
+        self.image_style = None
         # 添加信号与槽
         self.OpenImageButton.clicked.connect(self.OpenImage)
         self.SaveImageButton.clicked.connect(self.SaveImage)
         self.BeginConvButton.clicked.connect(self.BeginConv)
+        for sb in self.styleButton:
+            sb.clicked.connect(self.model_change)
+
+    def model_change(self):
+        obj_name = self.sender().objectName()[:-6]
+        self.image_style = obj_name
+        print(self.image_style)
 
     def OpenImage(self):
         img_path, img_type = QFileDialog.getOpenFileName(self, 'Open Image', '.', 'image files(*.png , *.jpg);;All Files(*)')
@@ -55,35 +68,8 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         如果未选择风格，则应弹出窗口提示。
         :return: None
         """
-        pass
-
-    def Makoto_Shinkai(self):
-        """
-        新海诚画风（动漫）
-        :return:
-        """
-        pass
-
-    def CN_Painting(self):
-        """
-        中国画画风
-        :return:
-        """
-        pass
-
-    def Pencil_Painting(self):
-        """
-        铅笔画画风
-        :return:
-        """
-        pass
-
-    def VanGogh(self):
-        """
-        梵高星空画画风
-        :return:
-        """
-        pass
+        ops = model_options.ModelOps()
+        ops.Load_model(image_style=self.image_style)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
