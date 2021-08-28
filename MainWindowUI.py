@@ -43,6 +43,12 @@ class Ui_MainWindow(object):
         self.SaveImageButton.setGeometry(QtCore.QRect(750, 590, 120, 30))
         self.SaveImageButton.setObjectName("SaveImage")
 
+        self.SaveImagePath_label = QtWidgets.QLabel(self.centralwidget)
+        self.SaveImagePath_label.setGeometry(QtCore.QRect(735, 640, 150, 50))
+        self.SaveImagePath_label.setText("保存路径")
+        self.SaveImagePath_label.setWordWrap(True)
+        self.SaveImagePath_label.setAlignment(QtCore.Qt.AlignCenter)
+
         self.BeginConvButton = QtWidgets.QPushButton(self.centralwidget)
         self.BeginConvButton.setGeometry(QtCore.QRect(455, 700, 150, 40))
         self.BeginConvButton.setObjectName("BeginConv")

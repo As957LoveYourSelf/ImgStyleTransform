@@ -63,7 +63,13 @@ class ModelOps:
         :param model_path: model path
         :return: a conversion Image class
         """
-        GAN = CartoonGAN.Transformer()
+        if "CartoonGAN" in model_path:
+            GAN = CartoonGAN.Transformer()
+        elif "CycleGAN" in model_path:
+            GAN = None
+        else:
+            print("None GAN")
+            return
         with torch.no_grad():
             model = torch.load(model_path)
             GAN.load_state_dict(model)
