@@ -14,12 +14,16 @@ Tips:
 文件夹选取 QFileDialog.getExistingDirectory()
 文件保存 QFileDialog.getSaveFileName()
 """
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtWidgets import *
 from PyQt5.Qt import QThread, QMutex
 from MainWindowUI import Ui_MainWindow
-from options import model_options
-import sys
+from options.model_options import ModelOps
+import torchvision.utils as vuts
+import torchvision.transforms as transforms
+from PIL import ImageQt, Image
+import traceback
+import sys, os
 
 
 class MyMainForm(QMainWindow, Ui_MainWindow):
@@ -37,7 +41,7 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
     def model_change(self):
         obj_name = self.sender().objectName()[:-6]
         self.image_style = obj_name
-        print(self.image_style)
+        print("change: ", self.image_style)
 
     def OpenImage(self):
         img_path, img_type = QFileDialog.getOpenFileName(self, 'Open Image', '.', 'image files(*.png , *.jpg);;All Files(*)')
@@ -50,7 +54,7 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         # img = np.asanyarray(img)
         # img = QImage(img,self.label.width(),self.label.height(),QImage.Format_RGB888)
         img = QPixmap(img_path)
-        self.label.setPixmap(img)
+        self.OrgImage.setPixmap(img)
         self.imagePath_label.setText(img_path)
         print("show image on label.")
 
@@ -68,8 +72,22 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         如果未选择风格，则应弹出窗口提示。
         :return: None
         """
-        ops = model_options.ModelOps()
-        ops.Load_model(image_style=self.image_style)
+        try:
+            ops = ModelOps()
+            image_style = self.image_style
+            print("input: ", image_style)
+            image = ops.Load_model(image_style=image_style, image_path=self.imagePath_label.text())
+            image = transforms.ToTensor()(image)
+            # PIL transform to QImage
+            # image = QImage(ImageQt.ImageQt(image))
+            # print(type(image))
+            image_name = str(self.image_style)+'_'+os.path.split(self.imagePath_label.text())[1]
+            image_save_path = "./result/"+image_name
+            vuts.save_image(image, image_save_path)
+            image = QPixmap(image_save_path)
+            self.ConvImage.setPixmap(image)
+        except Exception as e:
+            traceback.print_exc()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
