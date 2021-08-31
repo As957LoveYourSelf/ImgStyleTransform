@@ -81,11 +81,12 @@ class ModelOps:
                 GAN.float()
                 print("CPU mode")
             input_image = image.convert("RGB")
+            print("origin image size: ", input_image.size)
             H = h = input_image.size[0]
             W = w = input_image.size[1]
             # you can change the LOAD_SIZE to change image input size
             ##############
-            LOAD_SIZE = h
+            LOAD_SIZE = 800
             ##############
             ratio = h*1.0/w
             if ratio > 1:
@@ -119,4 +120,5 @@ class ModelOps:
             output_image = transforms.ToPILImage()(output_image)
             output_image = output_image.resize((H, W), Image.BICUBIC)
             print("output_image size: ", output_image.size,end=" ")
+            torch.cuda.empty_cache()
         return output_image

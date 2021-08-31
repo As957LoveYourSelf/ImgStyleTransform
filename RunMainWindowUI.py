@@ -22,9 +22,9 @@ from options.model_options import ModelOps
 import torchvision.utils as vuts
 import torchvision.transforms as transforms
 from PIL import ImageQt, Image
+import utils.sqlutil as su
 import traceback
 import sys, os
-
 
 class MyMainForm(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
@@ -32,6 +32,7 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.image_style = None
         self.image_save_path = None
+        self.imglabel_w, self.imglabel_h = self.OrgImage.width(), self.OrgImage.height()
         # 添加信号与槽
         self.OpenImageButton.clicked.connect(self.OpenImage)
         self.SaveImageButton.clicked.connect(self.SaveImage)
@@ -45,20 +46,23 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         print("change: ", self.image_style)
 
     def OpenImage(self):
-        img_path, img_type = QFileDialog.getOpenFileName(self, 'Open Image', '.', 'image files(*.png , *.jpg)')
+        img_path, img_type = QFileDialog.getOpenFileName(self, 'Open Image', '.', 'image files(*.png , *.jpg , *.jpeg)')
         print("Open Image path: ", img_path)
-        # img = cv2.imread(image)
-        # img = cv2.resize(img,dsize=(self.label.width(),self.label.height()),interpolation=cv2.INTER_CUBIC)
-        # print(self.label.width(),self.label.height())
-        # print("image resized")
-        # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        # img = np.asanyarray(img)
-        # img = QImage(img,self.label.width(),self.label.height(),QImage.Format_RGB888)
         if img_path != '':
-            img = QPixmap(img_path)
+            # 将图片显示至label，自动缩放大小
+            # TODO: Some bug here, need to modify
+            img_h, img_w = Image.open(img_path).size()
+            if img_h > img_w:
+                radio = img_h * 1.0 / img_w
+                img = QPixmap(img_path).scaled(self.imglabel_h/radio, self.imglabel_h)
+            else:
+                img = QPixmap(img_path)
             self.OrgImage.setPixmap(img)
             self.imagePath_label.setText(img_path)
-            print("show image on label.")
+            print("Shown image on label.")
+            # 插入数据库
+            sqlu = su.SQLutil()
+            sqlu.image2mysql(img_path, _type='tran')
         else:
             print("You are not open the image.")
 
@@ -93,14 +97,21 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
             print("input: ", image_style)
             image = ops.Load_model(image_style=image_style, image_path=self.imagePath_label.text())
             image = transforms.ToTensor()(image)
-            # PIL transform to QImage
-            # image = QImage(ImageQt.ImageQt(image))
-            # print(type(image))
             image_name = str(self.image_style) + '_' + os.path.split(self.imagePath_label.text())[1]
             self.image_save_path = "./result/" + image_name
             vuts.save_image(image, self.image_save_path)
-            image = QPixmap(self.image_save_path)
+            # 将图片显示至label，自动缩放大小
+            img_h, img_w = Image.open(self.image_save_path).size()
+            if img_h > img_w:
+                radio = img_h * 1.0 / img_w
+                image = QPixmap(self.image_save_path).scaled(self.imglabel_h/radio, self.imglabel_h)
+            else:
+                image = QPixmap(self.image_save_path)
             self.ConvImage.setPixmap(image)
+            print("Shown image in ConvLabel.")
+            # 插入数据库
+            sqlu = su.SQLutil()
+            sqlu.image2mysql(self.image_save_path, _type='tran')
         except Exception as e:
             traceback.print_exc()
 
