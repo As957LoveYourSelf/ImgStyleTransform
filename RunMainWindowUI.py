@@ -46,25 +46,32 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         print("change: ", self.image_style)
 
     def OpenImage(self):
-        img_path, img_type = QFileDialog.getOpenFileName(self, 'Open Image', '.', 'image files(*.png , *.jpg , *.jpeg)')
-        print("Open Image path: ", img_path)
-        if img_path != '':
-            # 将图片显示至label，自动缩放大小
-            # TODO: Some bug here, need to modify
-            img_h, img_w = Image.open(img_path).size()
-            if img_h > img_w:
-                radio = img_h * 1.0 / img_w
-                img = QPixmap(img_path).scaled(self.imglabel_h/radio, self.imglabel_h)
+        try:
+            img_path, img_type = QFileDialog.getOpenFileName(self, 'Open Image', './inputs', 'image files(*.png , *.jpg , *.jpeg)')
+            print("Open Image path: ", img_path)
+            if img_path != '':
+                # 将图片显示至label，自动缩放大小
+                img_w, img_h = Image.open(img_path).size
+                print("open image size: h:{},w:{}".format(img_h,img_w))
+                if img_h >= img_w:
+                    radio = img_h * 1.0 / img_w
+                    self.OrgImage.setScaledContents(False)
+                    img = QPixmap(img_path).scaled(int(self.imglabel_h/radio), int(self.imglabel_h))
+                    print(img.size())
+                else:
+                    self.OrgImage.setScaledContents(True)
+                    img = QPixmap(img_path)
+                    print(img.size())
+                self.OrgImage.setPixmap(img)
+                self.imagePath_label.setText(img_path)
+                print("Shown image on label.")
+                # 插入数据库
+                sqlu = su.SQLutil()
+                sqlu.image2mysql(img_path, _type='org')
             else:
-                img = QPixmap(img_path)
-            self.OrgImage.setPixmap(img)
-            self.imagePath_label.setText(img_path)
-            print("Shown image on label.")
-            # 插入数据库
-            sqlu = su.SQLutil()
-            sqlu.image2mysql(img_path, _type='tran')
-        else:
-            print("You are not open the image.")
+                print("You are not open the image.")
+        except:
+            traceback.print_exc()
 
     def SaveImage(self):
         """
@@ -101,12 +108,16 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
             self.image_save_path = "./result/" + image_name
             vuts.save_image(image, self.image_save_path)
             # 将图片显示至label，自动缩放大小
-            img_h, img_w = Image.open(self.image_save_path).size()
-            if img_h > img_w:
+            img_w, img_h = Image.open(self.image_save_path).size
+            if img_h >= img_w:
                 radio = img_h * 1.0 / img_w
-                image = QPixmap(self.image_save_path).scaled(self.imglabel_h/radio, self.imglabel_h)
+                self.ConvImage.setScaledContents(False)
+                image = QPixmap(self.image_save_path).scaled(int(self.imglabel_h/radio), int(self.imglabel_h))
+                print(image.size())
             else:
+                self.ConvImage.setScaledContents(True)
                 image = QPixmap(self.image_save_path)
+                print(image.size())
             self.ConvImage.setPixmap(image)
             print("Shown image in ConvLabel.")
             # 插入数据库

@@ -59,7 +59,7 @@ class Ui_MainWindow(object):
         self.OrgImage.setFrameShape(QtWidgets.QFrame.Box)
         self.OrgImage.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.OrgImage.setMidLineWidth(1)
-        self.OrgImage.setScaledContents(True)
+        # self.OrgImage.setScaledContents(True)
         self.OrgImage.setAlignment(QtCore.Qt.AlignCenter)
         self.OrgImage.setWordWrap(False)
         self.OrgImage.setOpenExternalLinks(False)
@@ -71,7 +71,7 @@ class Ui_MainWindow(object):
         self.ConvImage.setFrameShape(QtWidgets.QFrame.Box)
         self.ConvImage.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.ConvImage.setMidLineWidth(1)
-        self.ConvImage.setScaledContents(True)
+        # self.ConvImage.setScaledContents(True)
         self.ConvImage.setAlignment(QtCore.Qt.AlignCenter)
         self.ConvImage.setObjectName("ConvImage")
 

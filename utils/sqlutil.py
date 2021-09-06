@@ -49,7 +49,6 @@ class SQLutil:
             print("begin insert: {}".format(image_name + '.' + image_type))
             sql = "insert into org_image values (%s, %s, %s, %s);"
             arg = (image_name, image_type, image_data_code, date)
-            print(sql)
             cursor = conn.cursor()
             cursor.execute(sql, arg)
             conn.commit()
@@ -66,14 +65,15 @@ class SQLutil:
         if _type is None:
             print("Undefined type.")
             return False
-        sql = "select id from {}_image where id='{}'".format(image_name, _type)
+        sql = "select id from {}_image where id='{}'".format(_type, image_name)
         try:
             with conn.cursor() as cursor:
                 cursor.execute(sql)
                 sql_result = cursor.fetchone()
                 return sql_result is not None
-        except:
+        except pymysql.err.ProgrammingError:
             traceback.print_exc()
+            return True
 
     def __readall_image(self):
         pass

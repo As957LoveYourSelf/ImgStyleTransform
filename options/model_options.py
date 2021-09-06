@@ -5,7 +5,7 @@ Content:
 1. Add preprocessing parameters to the model
 2. Select model by args
 """
-import tensorflow as tf
+# import tensorflow as tf
 import torch
 import torchvision.transforms as transforms
 import os
