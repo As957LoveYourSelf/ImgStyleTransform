@@ -98,7 +98,7 @@ class SQLutil:
             print("Insert image name: ", image_name)
             image_type = img.split('.')[1]
             print("Image type: ", image_type)
-            image_datacode = pymysql.Binary(image_code)[3:]
+            image_datacode = pymysql.Binary(image_code)
             date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             # 插入表类型判断
             if _type == "tran":
